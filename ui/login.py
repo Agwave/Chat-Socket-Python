@@ -18,7 +18,8 @@ class Login(QtWidgets.QWidget, Ui_MainWindow):
 
         if is_user:
             self.chat_window.show()
-            print("tv")
+            self.chat_window.login()
             self.setHidden(True)
+
         else:
             QtWidgets.QMessageBox.information(self, "警告", "账号或密码错误")
