@@ -9,11 +9,10 @@ import sys
 
 
 if __name__ == "__main__":
-    db = ConnetMysql()
     app = QtWidgets.QApplication(sys.argv)
 
     chat_window = Chat()
-    login_window = Login(db, chat_window)
+    login_window = Login(chat_window)
     login_window.show()
 
     sys.exit(app.exec_())

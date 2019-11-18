@@ -10,12 +10,11 @@ class Client:
         self.server_host = server_host
         self.server_port = server_port
         self.sel = selectors.DefaultSelector()
-        self.socket = self.start_connections(self.server_host, self.server_port)
-
+        self.socket = self.start_connections()
         # 还需要有自己的ip和端口号，需要server发送过来
 
-    def start_connections(self, host, port):
-        server_addr = (host, port)
+    def start_connections(self):
+        server_addr = (self.server_host, self.server_port)
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.setblocking(False)
         sock.connect_ex(server_addr)
@@ -55,3 +54,6 @@ class Client:
                 print("closing connection")
                 self.sel.unregister(sock)
                 sock.close()
+
+    def sign_out(self):
+        self.socket.close()
