@@ -1,7 +1,6 @@
 from ui.login import Login
 from ui.chat import Chat
 
-from mysql.connectMysql import ConnetMysql
 from PyQt5 import QtWidgets
 import sys
 

@@ -67,10 +67,9 @@ class Client(object):
         self._server_port = server_port
         self.socket = None
         self._start_connections()
-        # 还需要有自己的ip和端口号，需要server发送过来
 
     def _start_connections(self):
-        server_addr = (self.server_host, self.server_port)
+        server_addr = (self._server_host, self._server_port)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect(server_addr)
         threading.Thread(target=self.read_from_server).start()
@@ -79,3 +78,6 @@ class Client(object):
         while True:
             recv = self.socket.recv(2048).decode("utf-8")
             print(recv)
+
+    def sign_out(self):
+        self.socket.close()

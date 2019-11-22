@@ -11,22 +11,22 @@ class Login(QtWidgets.QWidget, Ui_MainWindow):
         self.setupUi(self)
         self.pushButton.clicked.connect(self.login)
         self.chat_window = chat_window
+        self.db = ConnetMysql()
 
     def login(self):
-        db = ConnetMysql()
         id, password = self.lineEdit.text(), self.lineEdit_2.text()
         is_user = False
 
-        ids_and_passwords = db.search("select id, password from users")
+        ids_and_passwords = self.db.search("select id, password from users")
         for i, p in ids_and_passwords:
             if i == id and p == password:
                 is_user = True
-                db.update("update users set alive = 1 where id = %s and password = %s", [id, password])
                 break
 
         if is_user:
+            self.db.update("update users set alive = 1 where id = %s and password = %s", [id, password])
             self.chat_window.show()
-            self.chat_window.login()
+            self.chat_window.login(id)
             self.setHidden(True)
 
         else:

@@ -87,7 +87,6 @@ class ConnetMysql:
             print("Error: {}".format(sql))
             return None
 
-
     def update(self, sql, params=None):
         try:
             self.get_conn()
