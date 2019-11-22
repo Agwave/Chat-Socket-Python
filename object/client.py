@@ -1,11 +1,12 @@
 import socket
 import selectors
 import types
+import threading
 
 
-class Client:
+class ClientSel:
 
-    def __init__(self, server_host="localhost", server_port=50000):
+    def __init__(self, server_host="127.0.0.1", server_port=50000):
 
         self.server_host = server_host
         self.server_port = server_port
@@ -30,7 +31,7 @@ class Client:
     def main(self):
         try:
             while True:
-                events = self.sel.select(timeout=1)
+                events = self.sel.select(timeout=None)
                 if events:
                     for key, mask in events:
                         self.service_connection(key, mask)
@@ -57,3 +58,24 @@ class Client:
 
     def sign_out(self):
         self.socket.close()
+
+
+class Client(object):
+
+    def __init__(self, server_host="127.0.0.1", server_port=50000):
+        self._server_host = server_host
+        self._server_port = server_port
+        self.socket = None
+        self._start_connections()
+        # 还需要有自己的ip和端口号，需要server发送过来
+
+    def _start_connections(self):
+        server_addr = (self.server_host, self.server_port)
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.connect(server_addr)
+        threading.Thread(target=self.read_from_server).start()
+
+    def read_from_server(self):
+        while True:
+            recv = self.socket.recv(2048).decode("utf-8")
+            print(recv)
