@@ -2,6 +2,7 @@ import io
 import json
 import socket
 import selectors
+import time
 import types
 import threading
 
@@ -64,7 +65,8 @@ class ClientSel:
 
 class Client(object):
 
-    def __init__(self, server_host="127.0.0.1", server_port=50000):
+    def __init__(self, chat_window, server_host="127.0.0.1", server_port=50000):
+        self.chat_window = chat_window
         self._server_host = server_host
         self._server_port = server_port
         self.socket = None
@@ -82,27 +84,41 @@ class Client(object):
         while True:
             recv = self.socket.recv(2048)
             self._process_recv(recv)
+            time.sleep(0.5)
 
-    def _process_recv(self, data_recv):
-        data_dict = self._json_decode(data_recv)
-        if data_recv is not None:
+    def _process_recv(self, recv_data):
+        print("recv", repr(recv_data))
+        data_dict = self._json_decode(recv_data)
+        if recv_data is not None:
             action = data_dict.get("action")
             if action == "transmit":
                 value = data_dict.get("value")
                 from_id = data_dict.get("from_id")
                 print("recv: {} from {}".format(value, from_id))
-            elif action == "login" or action == "out":
-                pass
+                self.chat_window.textBrowser.append("(from {}): {}".format(from_id, value))
+            elif action == "login":
+                login_id = data_dict.get("from_id")
+                self.chat_window.listWidget.addItem(login_id)
+            elif action == "out":
+                out_id = data_dict.get("from_id")
+                for i in range(self.chat_window.listWidget.count()):
+                    if out_id == self.chat_window.listWidget.item(i).text():
+                        self.chat_window.listWidget.takeItem(i)
+                        break
             else:
                 print(f'Error: invalid action "{action}".')
 
     def _json_decode(self, json_bytes, encoding="utf-8"):
-        tiow = io.TextIOWrapper(
-            io.BytesIO(json_bytes), encoding=encoding, newline=""
-        )
-        obj = json.load(tiow)
-        tiow.close()
-        return obj
+        try:
+            tiow = io.TextIOWrapper(
+                io.BytesIO(json_bytes), encoding=encoding, newline=""
+            )
+            obj = json.load(tiow)
+            tiow.close()
+            return obj
+        except Exception as e:
+            print(e)
+            return
 
     def sign_out(self):
         self.socket.close()

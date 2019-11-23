@@ -12,7 +12,7 @@ class Message(object):
         self._content_type = type
         self._content_encoding = encoding
         self._content = self._get_content()
-        self._content_bytes = self._json_encode(self._content, self._content_encoding)
+        self.content_bytes = self._json_encode(self._content, self._content_encoding)
 
         self.message = self._get_message()
 
@@ -21,13 +21,13 @@ class Message(object):
             "byteorder": sys.byteorder,
             "content-type": self._content_type,
             "content-encoding": self._content_encoding,
-            "content-length": len(self._content_bytes),
+            "content-length": len(self.content_bytes),
         }
 
 
         jsonheader_bytes = self._json_encode(jsonheader, "utf-8")
         message_hdr = struct.pack(">H", len(jsonheader_bytes))
-        message = message_hdr + jsonheader_bytes + self._content_bytes
+        message = message_hdr + jsonheader_bytes + self.content_bytes
         return message
 
     def _get_content(self):
@@ -47,3 +47,4 @@ class Message(object):
 
     def _json_encode(self, obj, encoding):
         return json.dumps(obj, ensure_ascii=False).encode(encoding)
+

@@ -111,6 +111,7 @@ class ConnetMysql:
             id = self.search("select id from users where ip = %s and port = %s", addr)[0][0]
             self.update("update users set alive = 0, ip = '0', port = 0 where id = %s", id)
             print("sign out successfuly")
+            return id
 
         except Exception as e:
             print("Error: {}".format(e))

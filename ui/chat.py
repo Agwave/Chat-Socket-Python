@@ -3,7 +3,7 @@ from object.client import Client
 from object.message import Message
 from mysql.connectMysql import ConnetMysql
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtGui
 
 
 class Chat(QtWidgets.QWidget, Ui_MainWindow):
@@ -13,6 +13,7 @@ class Chat(QtWidgets.QWidget, Ui_MainWindow):
         self.setupUi(self)
         self.db = ConnetMysql()
         self.id = None
+        self.client = None
         self.pushButton.clicked.connect(self.send)
         self.pushButton_3.clicked.connect(self.sign_out)
 
@@ -23,14 +24,19 @@ class Chat(QtWidgets.QWidget, Ui_MainWindow):
         if result != ():
             users_alive = list(zip(*result))[0]
             self.listWidget.addItems(users_alive)
-        self.client = Client()
+        self.client = Client(self)
 
     def send(self):
         msg = self.textEdit.toPlainText()
         users = self._get_users()
-        for user in users:
-            byte_msg = Message("transmit", self.id, user, msg).content_bytes
-            self.client.socket.send(byte_msg)
+        if users == []:
+            QtWidgets.QMessageBox.information(self, "警告", "请在右栏选择发送对象")
+        else:
+            for user in users:
+                byte_msg = Message("transmit", self.id, user, msg).content_bytes
+                self.client.socket.send(byte_msg)
+                self.textBrowser.append("(to {}): {}".format(user, msg))
+            self.textEdit.clear()
 
     def sign_out(self):
         self.client.sign_out()
