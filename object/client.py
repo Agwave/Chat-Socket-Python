@@ -1,3 +1,4 @@
+import datetime
 import io
 import json
 import socket
@@ -95,7 +96,9 @@ class Client(object):
                 value = data_dict.get("value")
                 from_id = data_dict.get("from_id")
                 print("recv: {} from {}".format(value, from_id))
-                self.chat_window.textBrowser.append("(from {}): {}".format(from_id, value))
+                browser_msg = "({} from {}): {}".format(datetime.datetime.now(), from_id, value).rstrip()
+                self.chat_window.textBrowser.append(browser_msg + "\n")
+                self.chat_window.chat_record.append(browser_msg)
             elif action == "login":
                 login_id = data_dict.get("from_id")
                 self.chat_window.listWidget.addItem(login_id)

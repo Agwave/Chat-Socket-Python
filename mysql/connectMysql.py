@@ -105,6 +105,35 @@ class ConnetMysql:
             print("Error: {}".format(e))
             print("Error: {}".format(sql))
 
+    def save_chat_record(self, record, row, id):
+        try:
+            self.get_conn()
+            cursor = self.conn.cursor()
+            if len(record) != 0:
+                for r in record[row:]:
+                    date = r[1:11]
+                    time = r[12:27]
+                    params = (date, time, r)
+                    print(params)
+                    cursor.execute("insert into {} values(%s, %s, %s)".format(id+"_record"), params)
+                    row += 1
+                self.conn.commit()
+            self.cut_conn()
+            return row
+        except Exception as e:
+            print("Error: {}".format(e))
+            print("Error: record")
+            return
+
+    def get_record(self):
+        try:
+            self.get_conn()
+            cursor = self.conn.cursor()
+
+        except Exception as e:
+            print("Error: {}".format(e))
+            print("Error: get record")
+
     def sign_out(self, addr):
         try:
             self.get_conn()
