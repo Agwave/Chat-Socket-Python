@@ -7,6 +7,7 @@ import time
 import types
 import threading
 
+from object.message import Message
 
 class ClientSel:
 
@@ -88,28 +89,56 @@ class Client(object):
             time.sleep(0.5)
 
     def _process_recv(self, recv_data):
-        print("recv", repr(recv_data))
-        data_dict = self._json_decode(recv_data)
-        if recv_data is not None:
-            action = data_dict.get("action")
-            if action == "transmit":
-                value = data_dict.get("value")
-                from_id = data_dict.get("from_id")
-                print("recv: {} from {}".format(value, from_id))
-                browser_msg = "({} from {}): {}".format(datetime.datetime.now(), from_id, value).rstrip()
-                self.chat_window.textBrowser.append(browser_msg + "\n")
-                self.chat_window.chat_record.append(browser_msg)
-            elif action == "login":
-                login_id = data_dict.get("from_id")
-                self.chat_window.listWidget.addItem(login_id)
-            elif action == "out":
-                out_id = data_dict.get("from_id")
-                for i in range(self.chat_window.listWidget.count()):
-                    if out_id == self.chat_window.listWidget.item(i).text():
-                        self.chat_window.listWidget.takeItem(i)
-                        break
-            else:
-                print(f'Error: invalid action "{action}".')
+        try:
+            print("recv", repr(recv_data))
+            data_dict = self._json_decode(recv_data)
+            if recv_data is not None:
+                action = data_dict.get("action")
+                if action == "transmit":
+                    value = data_dict.get("value")
+                    from_id = data_dict.get("from_id")
+                    print("recv: {} from {}".format(value, from_id))
+                    browser_msg = "({} from {}): {}".format(datetime.datetime.now(), from_id, value).rstrip()
+                    self.chat_window.textBrowser.append(browser_msg + "\n")
+                    self.chat_window.chat_record.append(browser_msg)
+                elif action == "file":
+                    self.socket.send("ready".encode())
+                    self._recv_file(data_dict)
+                elif action == "login":
+                    login_id = data_dict.get("from_id")
+                    self.chat_window.listWidget.addItem(login_id)
+                elif action == "out":
+                    out_id = data_dict.get("from_id")
+                    for i in range(self.chat_window.listWidget.count()):
+                        if out_id == self.chat_window.listWidget.item(i).text():
+                            self.chat_window.listWidget.takeItem(i)
+                            break
+                else:
+                    print(f'Error: invalid action "{action}".')
+        except Exception as e:
+            print(e)
+
+    def _recv_file(self, data_dict):
+        file_size = data_dict.get("value")
+        file_name = data_dict.get("other")
+        from_id = data_dict.get("from_id")
+        to_id = data_dict.get("to_id")
+        recive_size = 0
+        res = b""
+        while recive_size < file_size:
+            data = self.socket.recv(2048)
+            recive_size += len(data)
+            res += data
+        new_file_name = "./recv_file/"+file_name
+        f = open(new_file_name, "wb")
+        f.write(res)
+        f.close()
+        browser_msg = "({} from {}): 接收{} 文件成功,保存位置为 {}".format(
+            datetime.datetime.now(), from_id, file_name, new_file_name
+        ).rstrip()
+        self.chat_window.textBrowser.append(browser_msg + "\n")
+        self.chat_window.chat_record.append(browser_msg)
+        self.socket.send(Message("transmit", to_id, from_id, "{} 文件已收到".format(file_name)).content_bytes)
 
     def _json_decode(self, json_bytes, encoding="utf-8"):
         try:

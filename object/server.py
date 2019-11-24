@@ -2,6 +2,7 @@ import io
 import json
 import socket
 import selectors
+import time
 import types
 
 from mysql.connectMysql import ConnetMysql
@@ -57,7 +58,7 @@ class Server():
         sock = key.fileobj
         data = key.data
         if mask & selectors.EVENT_READ:
-            recv_data = sock.recv(1024)  # Should be ready to read
+            recv_data = sock.recv(2048)  # Should be ready to read
             if recv_data:
                 self._process_recv(recv_data, data)
             else:
@@ -72,19 +73,24 @@ class Server():
         return obj
 
     def _process_recv(self, recv_data, data):
-        print("recv", repr(recv_data), "from", data.addr)
-        data_dict = self._json_decode(recv_data)
-        if recv_data is not None:
-            action = data_dict.get("action")
-            if action == "transmit":
-                to_id = data_dict.get("to_id")
-                sock = self.id_to_sock.get(to_id)
-                sock.send(recv_data)
-                print("send successfully")
-            elif action == "login" or action == "out":
-                pass
-            else:
-                print(f'Error: invalid action "{action}".')
+        try:
+            print("recv", repr(recv_data), "from", data.addr)
+            data_dict = self._json_decode(recv_data)
+            if recv_data is not None:
+                action = data_dict.get("action")
+                if action == "transmit":
+                    to_id = data_dict.get("to_id")
+                    sock = self.id_to_sock.get(to_id)
+                    sock.send(recv_data)
+                    print("send successfully")
+                elif action == "file":
+                    self._trainsmit_file(recv_data, data_dict)
+                elif action == "login" or action == "out":
+                    pass
+                else:
+                    print(f'Error: invalid action "{action}".')
+        except Exception as e:
+            print(e)
 
     def _send_login_message_to_other_clients(self, id):
         message = Message("login", id, "", "").content_bytes
@@ -101,7 +107,24 @@ class Server():
         for i in self.id_to_sock.keys():
             self.id_to_sock[i].send(Message("out", id, "", "").content_bytes)
 
-
+    def _trainsmit_file(self, recv_data, data_dict):
+        to_id = data_dict.get("to_id")
+        from_id = data_dict.get("from_id")
+        from_sock = self.id_to_sock.get(from_id)
+        sock = self.id_to_sock.get(to_id)
+        file_size = data_dict.get("value")
+        sock.send(recv_data)
+        time.sleep(0.5)
+        ready_msg = sock.recv(2048)
+        if ready_msg.decode() == "ready":
+            total_recv = 0
+            res = b""
+            while total_recv < file_size:
+                file_data = from_sock.recv(2048)
+                res += file_data
+                total_recv += len(file_data)
+            sock.sendall(res)
+            time.sleep(0.5)
 
 if __name__ == "__main__":
     server = Server()

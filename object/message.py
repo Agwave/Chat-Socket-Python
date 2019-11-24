@@ -4,11 +4,12 @@ import struct
 
 class Message(object):
 
-    def __init__(self, action, from_id, to_id, value, type="text/json", encoding="utf-8",):
+    def __init__(self, action, from_id, to_id, value, other="", type="text/json", encoding="utf-8",):
         self._action = action
         self._from_id = from_id
         self._to_id = to_id
         self._value = value
+        self._other = other
         self._content_type = type
         self._content_encoding = encoding
         self._content = self._get_content()
@@ -31,12 +32,13 @@ class Message(object):
         return message
 
     def _get_content(self):
-        if self._action == "transmit":
+        if self._action == "transmit" or self._action == "file":
             return dict(
                 action=self._action,
                 from_id=self._from_id,
                 to_id=self._to_id,
-                value=self._value
+                value=self._value,
+                other=self._other
             )
         elif self._action == "login" or self._action == "out":
             return dict(action=self._action, from_id=self._from_id)
