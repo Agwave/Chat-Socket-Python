@@ -1,16 +1,18 @@
 from .loginWindow import Ui_MainWindow
-from .chat import Chat
+
 from mysql.connectMysql import ConnetMysql
 
 from PyQt5 import QtWidgets
 
 
 class Login(QtWidgets.QWidget, Ui_MainWindow):
-    def __init__(self, chat_window):
+    def __init__(self, chat_window, signup_window):
         super(Login, self).__init__()
         self.setupUi(self)
         self.pushButton.clicked.connect(self.login)
+        self.pushButton_2.clicked.connect(self.sign_up)
         self.chat_window = chat_window
+        self.signup_window = signup_window
         self.db = ConnetMysql()
 
     def login(self):
@@ -31,3 +33,6 @@ class Login(QtWidgets.QWidget, Ui_MainWindow):
 
         else:
             QtWidgets.QMessageBox.information(self, "警告", "账号或密码错误")
+
+    def sign_up(self):
+        self.signup_window.show()

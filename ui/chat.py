@@ -1,12 +1,9 @@
 import os
 
-from PyQt5.QtCore import QDir
-
 from .chatWindow import Ui_MainWindow
 from object.client import Client
 from object.message import Message
 from mysql.connectMysql import ConnetMysql
-from ui.file import File
 
 from PyQt5 import QtWidgets, QtGui
 import datetime

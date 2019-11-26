@@ -17,7 +17,7 @@
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
-      <x>60</x>
+      <x>50</x>
       <y>30</y>
       <width>701</width>
       <height>481</height>
@@ -29,7 +29,7 @@
     <widget class="QWidget" name="gridLayoutWidget">
      <property name="geometry">
       <rect>
-       <x>170</x>
+       <x>210</x>
        <y>100</y>
        <width>271</width>
        <height>201</height>
@@ -58,18 +58,31 @@
       </item>
      </layout>
     </widget>
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QWidget" name="horizontalLayoutWidget">
      <property name="geometry">
       <rect>
-       <x>260</x>
-       <y>350</y>
-       <width>89</width>
-       <height>25</height>
+       <x>230</x>
+       <y>340</y>
+       <width>231</width>
+       <height>33</height>
       </rect>
      </property>
-     <property name="text">
-      <string>登录</string>
-     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QPushButton" name="pushButton">
+        <property name="text">
+         <string>登录</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_2">
+        <property name="text">
+         <string>注册</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </widget>
   </widget>

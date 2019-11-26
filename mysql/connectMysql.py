@@ -146,6 +146,16 @@ class ConnetMysql:
             print("Error: {}".format(e))
             print("Error: {}".format(addr))
 
+    def create_table(self, sql, params=None):
+        self.get_conn()
+        cursor = self.conn.cursor()
+        if params is not None:
+            cursor.execute(sql, params)
+        else:
+            cursor.execute(sql)
+        self.cut_conn()
+        print("create table successfully")
+
     def cut_conn(self):
         try:
             self.conn.close()
