@@ -11,7 +11,7 @@ from object.message import Message
 
 class ClientSel:
 
-    def __init__(self, server_host="127.0.0.1", server_port=50000):
+    def __init__(self, server_host="172.16.30.17", server_port=50000):
 
         self.server_host = server_host
         self.server_port = server_port
@@ -67,7 +67,7 @@ class ClientSel:
 
 class Client(object):
 
-    def __init__(self, chat_window, server_host="127.0.0.1", server_port=50000):
+    def __init__(self, chat_window, server_host="192.168.137.171", server_port=50000):
         self.chat_window = chat_window
         self._server_host = server_host
         self._server_port = server_port
@@ -83,10 +83,14 @@ class Client(object):
         self.t.start()
 
     def read_from_server(self):
-        while True:
-            recv = self.socket.recv(2048)
-            self._process_recv(recv)
-            time.sleep(0.5)
+        try:
+            while True:
+                recv = self.socket.recv(2048)
+                self._process_recv(recv)
+                time.sleep(0.5)
+        except Exception as e:
+            print(e)
+            self.sign_out()
 
     def _process_recv(self, recv_data):
         try:

@@ -10,7 +10,7 @@ from object.message import Message
 
 class Server():
 
-    def __init__(self, host='127.0.0.1', port=50000):
+    def __init__(self, host='192.168.137.171', port=50000):
         self.host = host
         self.port = port
         self.sel = selectors.DefaultSelector()
@@ -55,14 +55,17 @@ class Server():
             self._send_login_message_to_other_clients(id[0][0])
 
     def service_connection(self, key, mask):
-        sock = key.fileobj
-        data = key.data
-        if mask & selectors.EVENT_READ:
-            recv_data = sock.recv(2048)  # Should be ready to read
-            if recv_data:
-                self._process_recv(recv_data, data)
-            else:
-                self._process_client_sign_out(sock, data)
+        try:
+            sock = key.fileobj
+            data = key.data
+            if mask & selectors.EVENT_READ:
+                recv_data = sock.recv(2048)  # Should be ready to read
+                if recv_data:
+                    self._process_recv(recv_data, data)
+                else:
+                    self._process_client_sign_out(sock, data)
+        except Exception as e:
+            print(e)
 
     def _json_decode(self, json_bytes, encoding="utf-8"):
         tiow = io.TextIOWrapper(
