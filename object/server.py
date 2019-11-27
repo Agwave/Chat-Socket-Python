@@ -10,7 +10,7 @@ from object.message import Message
 
 class Server():
 
-    def __init__(self, host='192.168.137.171', port=50000):
+    def __init__(self, host='127.0.0.1', port=50000):
         self.host = host
         self.port = port
         self.sel = selectors.DefaultSelector()
