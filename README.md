@@ -19,5 +19,3 @@
 9. 两个用户便可以通信了。
 
 附：如果想要在不同主机中通信，需要在同一个局域网或者连同一个路由（热点相连或连同一个wifi），并修改好server.py、client.py和connectMySQL.py中host地址。 
-
-**代码地址：https://github.com/Agwave/Chat-Socket-Python**
