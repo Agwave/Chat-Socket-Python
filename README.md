@@ -1,8 +1,11 @@
 ﻿# 一、界面展示
+ 
 主界面：
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20191127130811604.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxODA1NTEx,size_16,color_FFFFFF,t_70)
+
 注册界面：
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/2019112713095498.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxODA1NTEx,size_16,color_FFFFFF,t_70)
+
 登录界面：
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20191127131027466.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxODA1NTEx,size_16,color_FFFFFF,t_70)
 # 二、使用方法
